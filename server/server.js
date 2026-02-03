@@ -8,7 +8,11 @@ const urlRoute = require('./routes/urlRoutes'); // Import the Routes
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: ["https://url-shortner-mernstack-project-dzxt.vercel.app"], // Your actual Frontend URL from the error log
+    methods: ["POST", "GET"],
+    credentials: true
+}));
 
 // --- DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
