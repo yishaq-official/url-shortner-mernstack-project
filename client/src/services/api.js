@@ -1,19 +1,21 @@
 import axios from 'axios';
 
-// 1. Point to your Backend Server (Port 5000)
+// 1. DYNAMIC URL SELECTION
+// If we are in production (Vercel), use the environment variable.
+// If the variable is missing (or we are local), fallback to localhost.
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const API = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: API_URL,
 });
 
-// 2. Define the API calls
+// ... (keep the rest of your functions: shortenUrl, getAnalytics)
 export const shortenUrl = async (originalUrl) => {
-  // Sends POST to http://localhost:5000/url
   const response = await API.post('/url', { url: originalUrl });
   return response.data;
 };
 
 export const getAnalytics = async (shortId) => {
-  // Sends GET to http://localhost:5000/url/analytics/xyz
   const response = await API.get(`/url/analytics/${shortId}`);
   return response.data;
 };

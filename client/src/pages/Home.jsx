@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Needed for the history links
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import InputForm from '../components/InputForm';
 import ResultCard from '../components/ResultCard';
@@ -11,10 +11,8 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   
-  // --- NEW: History State ---
   const [recentLinks, setRecentLinks] = useState([]);
 
-  // 1. Load history from LocalStorage when app starts
   useEffect(() => {
     const savedLinks = JSON.parse(localStorage.getItem('linkHistory')) || [];
     setRecentLinks(savedLinks);
@@ -34,11 +32,17 @@ const Home = () => {
 
     try {
       const data = await shortenUrl(inputUrl);
-      const fullShortUrl = `http://localhost:5000/${data.id}`;
+      
+      // --- THE FIX IS HERE ---
+      // 1. Get the base URL from environment (Vercel) OR fallback to localhost
+      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      
+      // 2. Construct the link dynamically
+      const fullShortUrl = `${baseURL}/${data.id}`;
+      // -----------------------
       
       setShortUrl(fullShortUrl);
 
-      // --- NEW: Add to History ---
       const newLinkEntry = {
         id: data.id,
         original: inputUrl,
@@ -46,7 +50,6 @@ const Home = () => {
         date: new Date().toLocaleDateString()
       };
 
-      // Add to top of list, keep only last 5
       const updatedLinks = [newLinkEntry, ...recentLinks].slice(0, 5);
       
       setRecentLinks(updatedLinks);
@@ -64,7 +67,7 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
 
-      <main className="grow flex flex-col items-center pt-16 pb-12 px-4 sm:px-6">
+      <main className="flex-grow flex flex-col items-center pt-16 pb-12 px-4 sm:px-6">
         
         <InputForm 
           inputUrl={inputUrl}
@@ -74,13 +77,11 @@ const Home = () => {
           error={error}
         />
 
-        {/* Current Result */}
         <ResultCard 
           shortUrl={shortUrl} 
           originalUrl={inputUrl}
         />
 
-        {/* --- NEW: Recent History Section --- */}
         {recentLinks.length > 0 && (
           <div className="w-full max-w-3xl mt-12 animate-fade-in-up">
             <h3 className="text-gray-500 font-medium mb-4 uppercase text-xs tracking-wider">
