@@ -16,7 +16,7 @@ const Dashboard = () => {
         const result = await getAnalytics(id);
         setData(result);
       } catch (err) {
-        setError("Link not found or server error.");
+        setError("Link not found or server error.", err);
       } finally {
         setLoading(false);
       }
