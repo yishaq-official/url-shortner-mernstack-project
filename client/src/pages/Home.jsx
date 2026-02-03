@@ -64,7 +64,7 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
 
-      <main className="flex-grow flex flex-col items-center pt-16 pb-12 px-4 sm:px-6">
+      <main className="grow flex flex-col items-center pt-16 pb-12 px-4 sm:px-6">
         
         <InputForm 
           inputUrl={inputUrl}

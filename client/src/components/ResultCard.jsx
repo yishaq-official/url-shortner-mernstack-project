@@ -23,7 +23,7 @@ const ResultCard = ({ shortUrl, originalUrl }) => {
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <div className="p-6 flex flex-col md:flex-row items-center justify-between gap-4">
           
-          <div className="flex-grow min-w-0 text-center md:text-left">
+          <div className="grow min-w-0 text-center md:text-left">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
               Your Short Link is Ready!
             </h3>
