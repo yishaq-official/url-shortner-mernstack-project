@@ -2,48 +2,53 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import InputForm from '../components/InputForm';
 import ResultCard from '../components/ResultCard';
+import { shortenUrl } from '../services/api'; // <--- NEW IMPORT
 
 const Home = () => {
-  // --- TEMPORARY STATE (Just for visual testing) ---
   const [inputUrl, setInputUrl] = useState('');
   const [shortUrl, setShortUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Simulation of what happens when you click "Shorten"
-  const handleSubmit = (e) => {
+  // Updated to be ASYNC to handle the API call
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setShortUrl(null);
 
-    // 1. Validation Logic Visual Check
+    // 1. Validation
     if (!inputUrl) {
       setError('Please enter a valid URL');
       return;
     }
 
-    // 2. Loading State Visual Check
     setIsLoading(true);
 
-    // Fake API call delay (1.5 seconds)
-    setTimeout(() => {
+    try {
+      // 2. REAL API CALL
+      const data = await shortenUrl(inputUrl);
+      
+      // 3. Construct the full link
+      // Note: In production, you would change 'localhost:5000' to your real domain
+      const fullShortUrl = `http://localhost:5000/${data.id}`;
+      
+      setShortUrl(fullShortUrl);
+    } catch (err) {
+      console.error(err);
+      // Better error message handling
+      setError("Failed to shorten link. Is the server running?");
+    } finally {
       setIsLoading(false);
-      // Fake success result
-      setShortUrl('http://localhost:5000/ad72b'); 
-    }, 1500);
+    }
   };
-  // --------------------------------------------------
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       
-      {/* 1. Navigation at the top */}
       <Navbar />
 
-      {/* 2. Main Content Area */}
       <main className="flex-grow flex flex-col items-center pt-16 pb-12 px-4 sm:px-6">
         
-        {/* Pass the state down to the InputForm */}
         <InputForm 
           inputUrl={inputUrl}
           setInputUrl={setInputUrl}
@@ -52,8 +57,7 @@ const Home = () => {
           error={error}
         />
 
-        {/* Pass the result down to the Card */}
-        {/* This will only appear when shortUrl is not null */}
+        {/* The ResultCard handles the "Copy" logic automatically */}
         <ResultCard 
           shortUrl={shortUrl} 
           originalUrl={inputUrl}
@@ -61,9 +65,8 @@ const Home = () => {
 
       </main>
 
-      {/* 3. Simple Footer (Optional) */}
       <footer className="py-6 text-center text-gray-400 text-sm">
-        &copy; {new Date().getFullYear()} ekchun. Built with React & Node.
+        &copy; {new Date().getFullYear()} Ekchun. Built with React & Node.
       </footer>
 
     </div>
